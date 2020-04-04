@@ -13,9 +13,12 @@ localStorage = new LocalStorage('./scratch');
 
 // retrieve all users
 exports.findAll = (req, res) => {
-  var users = localStorage.getItem('users');
-  if(users === null || users.length === 0)
-    users = [];
+  var users = [];
+
+  if(localStorage.length !== 0)
+    users = JSON.parse(localStorage.getItem('users'));
+  console.log("in findAll users sunt:")
+  console.log(users);
   res.send(users);
 
 /*
@@ -124,12 +127,12 @@ exports.create = (req, res) => {
         });*/
         var users = [];
         if(localStorage.getItem('users') !== null)
-          users = localStorage.getItem('users');
+          users = JSON.parse(localStorage.getItem('users'));
 
-        console.log("in users avem:");
+        console.log("in create users avem:");
         console.log(users);
         users.push(user);
-        localStorage.setItem('users', users);
+        localStorage.setItem('users', JSON.stringify(users));
         res.send("ok");
 
     })

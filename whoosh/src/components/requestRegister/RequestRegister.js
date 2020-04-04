@@ -57,7 +57,7 @@ export default class RequestRegister extends Component {
 
         const form = new FormData();
         form.set('email', this.state.email);
-        form.set('first_name', this.state.firstname);
+        form.set('first_name', this.state.firstname);    
         form.set('last_name', this.state.lastname);
 
         authService.getAllUsers()
@@ -65,8 +65,7 @@ export default class RequestRegister extends Component {
           console.log(res)
           var user = [];
           if(res != null)
-             user =  JSON.parse(res);
-            console.log(user);
+             user =  res;
           if (user.filter(x => x.email === this.state.email).length !== 0) {
             this.setState({ message: "This email is already registered!" });
           } else {
