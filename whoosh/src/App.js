@@ -124,7 +124,6 @@ class App extends Component {
     } else {
       return (
         <Router>
-
           <div className="AppLogin">
             <Switch>
               <Route exact path='/login' handleLogin={this.handleLogin} render={props => <Login {...props} user={this.state.user.toString()} handleLogin={this.handleLogin} />} />
