@@ -63,8 +63,10 @@ export default class RequestRegister extends Component {
         authService.getAllUsers()
         .then((res) => {
           console.log(res)
-          const user = res;
-          
+          var user = [];
+          if(res != null)
+             user =  JSON.parse(res);
+            console.log(user);
           if (user.filter(x => x.email === this.state.email).length !== 0) {
             this.setState({ message: "This email is already registered!" });
           } else {
@@ -79,7 +81,7 @@ export default class RequestRegister extends Component {
                             messageModal: "There has been an internal problem, please try again later."
                         });
                     })
-          }
+         }
         })
         .catch((err) => {
           console.error(err);

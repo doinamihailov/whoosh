@@ -12,11 +12,9 @@ class Chat extends Component {
     };
   }
 
-
   render() {
     return (
       <div className="card page">
-
         <Title title="Chat" class="title-80" variant="h4" align="center" />
         <p>Chat here..</p>
       </div >

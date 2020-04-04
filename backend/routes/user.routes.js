@@ -12,24 +12,5 @@ module.exports = app => {
   // Retrieve all users
   router.get("/", users.findAll);
 
-  // delete all
-  router.delete("/", users.deleteAll);
-
-  // delete by id
-  router.post("/deleteByID", users.deleteByID);
-
-  // changePassword 
-  router.post("/changePassword", users.changePassword);
-
-  // update password
-  router.post("/forgottenPassword", users.resetPassword);
-
-  // edit user
-  router.post("/editUser", users.editUser);
-
-   // register request
-   router.post("/registerRequest", users.registerRequest);
-
-
   app.use('/users', router);
 };

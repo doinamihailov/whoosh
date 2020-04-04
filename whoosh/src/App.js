@@ -91,7 +91,7 @@ class App extends Component {
               <AppBar position="fixed" className={classes.appbar}>
                 <Toolbar>
                   <Typography variant="h6" className={classes.title}>
-                    <Link to="/" className="link">
+                    <Link to="/login" className="link">
                       Whoosh
                 </Link>
                   </Typography>
