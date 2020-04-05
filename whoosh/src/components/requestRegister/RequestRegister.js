@@ -62,7 +62,6 @@ export default class RequestRegister extends Component {
 
         authService.getAllUsers()
         .then((res) => {
-          console.log(res)
           var user = [];
           if(res != null)
              user =  res;

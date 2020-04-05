@@ -12,5 +12,8 @@ module.exports = app => {
   // Retrieve all users
   router.get("/", users.findAll);
 
+  // update password
+  router.post("/forgottenPassword", users.resetPassword);
+
   app.use('/users', router);
 };

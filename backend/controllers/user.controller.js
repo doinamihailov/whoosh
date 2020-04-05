@@ -1,5 +1,3 @@
-//const User = require("../models/User");
-
 const bcrypt = require("bcrypt");
 const saltRounds = 10;
 let jwt = require('jsonwebtoken');
@@ -10,28 +8,14 @@ var nodemailer = require('nodemailer');
 var LocalStorage = require('node-localstorage').LocalStorage,
 localStorage = new LocalStorage('./scratch');
 
-
 // retrieve all users
 exports.findAll = (req, res) => {
   var users = [];
 
   if(localStorage.length !== 0)
     users = JSON.parse(localStorage.getItem('users'));
-  console.log("in findAll users sunt:")
-  console.log(users);
   res.send(users);
 
-/*
-  User.findAll()
-    .then(data => {
-      res.send(data);
-    })
-    .catch(err => {
-      res.status(500).send({
-        message:
-          err.message || "Some error occurred while retrieving user."
-      });
-    });*/
 };
 
 // verify login
@@ -44,10 +28,11 @@ exports.login = (req, res) => {
     });
     return;
   }
-/*
-  User.findAll()
-    .then(data => {
-      const user = data.filter(x => x.email === req.body.email);
+      var users = [];
+
+      if(localStorage.length !== 0)
+        users = JSON.parse(localStorage.getItem('users'));
+      const user = users.filter(x => x.email === req.body.email);
       const pass = user[0].password;
 
       bcrypt
@@ -76,14 +61,7 @@ exports.login = (req, res) => {
             });
           }
         })
-        .catch(err => console.error(err.message));
-    })
-    .catch(err => {
-      res.status(500).send({
-        message:
-          err.message || "Some error occurred while retrieving user."
-      });
-    });*/
+        .catch(err => console.error(err.message))
 };
 
 exports.create = (req, res) => {
@@ -112,27 +90,16 @@ exports.create = (req, res) => {
 
       // Store hash in your password DB.
       user.password = hash;
-      /*
-      // save user in db
-      User.create(user)
-        .then(data => {
-          res.send(data);
-        })
-        .catch(err => {
-          console.log(err)
-            ; res.status(500).send({
-              message:
-                err.message || "Some error occurred while creating the user."
-            });
-        });*/
         var users = [];
         if(localStorage.getItem('users') !== null)
           users = JSON.parse(localStorage.getItem('users'));
-
+        
+        users.push(user);
         console.log("in create users avem:");
         console.log(users);
-        users.push(user);
+       
         localStorage.setItem('users', JSON.stringify(users));
+        console.log(JSON.stringify(users));
         res.send("ok");
 
     })
@@ -155,7 +122,7 @@ exports.create = (req, res) => {
   });
 
   var mailOptions = {
-    from: '"noreply.vat@aquasoft.ro"deductions@aquasoft.ro',
+    from: '"noreply@whoosh.ro"deductions@aquasoft.ro',
     to: user.email,
     subject: 'Account created succesfully',
     text: 'Your account was created succesfully!\n' + '\nYour information is:\nFirst name: ' +
@@ -173,3 +140,71 @@ exports.create = (req, res) => {
   });
 
 };
+
+
+exports.resetPassword = (req, res) => {
+  const user = {
+    first_name: req.body.first_name,
+    last_name: req.body.last_name,
+    email: req.body.email,
+    password: '',
+  };
+  var randomPass = crypto.randomBytes(4).toString('hex');
+  console.log(randomPass);
+  bcrypt
+    .hash(randomPass, saltRounds)
+    .then(hash => {
+
+      // Store hash in your password DB.
+      user.password = hash;
+      var users = [];
+      if(localStorage.getItem('users') !== null){
+        users = JSON.parse(localStorage.getItem('users'));
+        users = users.filter(x => x.email !== user.email);
+        
+        users.push(user);
+        localStorage.setItem('users', JSON.stringify(users));
+        res.send({
+            message: "user was updated successfully."
+        });
+        } else {
+          res.status(500).send({
+            message: "Error updating user with email=" + req.body.email
+          });
+        }
+    })
+    .catch(err => console.error(err.message));
+
+    //send email with random password
+
+    var transporter = nodemailer.createTransport({
+      host: 'aquasoft.ro',
+      port: 465,
+      secure: true, // true for 465, false for other ports
+      auth: {
+        user: 'deductions@aquasoft.ro', // generated ethereal user
+        pass: 'NkN1ppxbZj&A'
+        //   pass: '!@#$%TREWQ' // generated ethereal password
+      },
+      tls: {
+        rejectUnauthorized: false
+      }
+    });
+
+    var mailOptions = {
+      from: '"noreply@whoosh.ro" deductions@aquasoft.ro',
+      to: user.email,
+      subject: 'Reset password',
+      text: 'Your password has been reset succesfully!\n' + '\nYour information is:\nFirst name: ' +
+        user.first_name + '\nLast name: ' + user.last_name + '\nEmail: ' + user.email +
+        '\n' + '\nYour new password was automatically generated: ' + randomPass
+    };
+
+    transporter.sendMail(mailOptions, function (error, info) {
+      if (error) {
+        console.log(error);
+      } else {
+        console.log('Email sent: ' + info.response);
+      }
+    });
+}
