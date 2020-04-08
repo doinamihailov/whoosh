@@ -1,12 +1,14 @@
 # whoosh
-Comenzi pentru rularea aplicatiei:
+Instant messaging app
 
-- deschide terminal in locatia dorita 
+Commands for running the app:
+
+- open a terminal in the wanted location
 * git clone https://github.com/doinamihailov/whoosh.git
 * cd whoosh/whoosh
 * npm install
 * npm start
 
-- deschide alt terminal in folderul backend
+- open another terminal in the backend folder
 * npm install
 * node index.js
