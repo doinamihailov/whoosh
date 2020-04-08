@@ -52,22 +52,25 @@ class AuthenticationService {
 
     deleteUser(data) {
         return new Promise((resolve, reject) => {
-            axios.post(URL + '/users/deleteByID', { id: data })
+            axios.post(URL + '/users/delete', data, {
+                headers: { 'Content-Type': 'multipart/form-data' },
+            })
                 .then((res) => {
-                    resolve(res.data);
+                    resolve(res.data)
                 })
                 .catch((error) => reject(error));
         })
     }
 
-    updatePassUser(data) {
-        return new Promise((resolve, reject) => {
-            axios.post(URL + '/users/changePassword', data)
-                .then((res) => {
-                    resolve(res.data);
-                })
-                .catch((error) => reject(error));
+    updatePassUser(data) { return new Promise((resolve, reject) => {
+        axios.post(URL + '/users/changePassword', data, {
+            headers: { 'Content-Type': 'multipart/form-data' },
         })
+            .then((res) => {
+                resolve(res.data)
+            })
+            .catch((error) => reject(error));
+    })
     }
 
     resetPassUser(data) {

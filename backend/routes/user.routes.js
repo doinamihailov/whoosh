@@ -15,5 +15,14 @@ module.exports = app => {
   // update password
   router.post("/forgottenPassword", users.resetPassword);
 
+  //change password
+  router.post("/changePassword", users.changePassword);
+
+  //change password
+  router.post("/editUser", users.editUser);
+
+  //change password
+  router.post("/delete", users.delete);
+
   app.use('/users', router);
 };

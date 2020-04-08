@@ -39,9 +39,6 @@ export default class Login extends Component {
     })
       .then(res => {
         console.log("token:" + res.data.token);
-        //TO DO: catch 403, display error
-        // if not, put token in local storage
-        // this.myStorage.setItem(data.email, res.data.token);
         localStorage.setItem("token", res.data.token);
         localStorage.setItem("currentEmail", data.email);
         this.props.handleLogin()

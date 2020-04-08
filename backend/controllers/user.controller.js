@@ -55,8 +55,7 @@ exports.login = (req, res) => {
 
           }
           else {
-            res.send(403).json({
-              success: false,
+            res.status(403).send({
               message: 'Incorrect username or password'
             });
           }
@@ -207,4 +206,81 @@ exports.resetPassword = (req, res) => {
         console.log('Email sent: ' + info.response);
       }
     });
+}
+
+exports.changePassword = (req, res) => {
+  const user = {
+    first_name: req.body.first_name,
+    last_name: req.body.last_name,
+    email: req.body.email,
+    password: ''
+  };
+  
+  bcrypt
+    .hash(req.body.password, saltRounds)
+    .then(hash => {
+    
+      user.password = hash;
+
+      var users = [];
+      if(localStorage.getItem('users') !== null){
+        users = JSON.parse(localStorage.getItem('users'));
+        users = users.filter(x => x.email !== user.email);
+        
+        users.push(user);
+        localStorage.setItem('users', JSON.stringify(users));
+        res.send({
+          message: "user was updated successfully."
+        });
+      } else {
+        res.status(500).send({
+        message: "Error updating user with email=" + req.body.email
+        });
+      }
+      
+    })
+    .catch(err => console.error(err.message));
+ }
+
+ exports.editUser = (req, res) => {
+  const user = {
+    first_name: req.body.first_name,
+    last_name: req.body.last_name,
+    email: req.body.email,
+    password: req.body.password
+  };
+  var users = [];
+
+  if(localStorage.getItem('users') !== null){
+    users = JSON.parse(localStorage.getItem('users'));
+    users = users.filter(x => x.email !== user.email);
+        
+    users.push(user);
+    localStorage.setItem('users', JSON.stringify(users));
+    res.send({
+        message: "user was updated successfully."
+    });
+    } else {
+      res.status(500).send({
+      message: "Error updating user with email=" + req.body.email
+    });
+  }
+}
+
+exports.delete = (req, res) => {
+  var users = [];
+  
+  if(localStorage.getItem('users') !== null){
+    users = JSON.parse(localStorage.getItem('users'));
+    users = users.filter(x => x.email !== req.body.email);
+      
+    localStorage.setItem('users', JSON.stringify(users));
+    res.send({
+        message: "user was updated successfully."
+    });
+    } else {
+      res.status(500).send({
+      message: "Error updating user with email=" + req.body.email
+    });
+  }
 }

@@ -6,6 +6,7 @@ import Login from "./components/login/Login";
 import ForgottenPassword from "./components/forgottenPassword/ForgottenPassword";
 import RequestRegister from "./components/requestRegister/RequestRegister";
 import Chat from "./components/chat/Chat";
+import Settings from "./components/settings/Settings";
 
 import { withStyles } from '@material-ui/core/styles';
 import AppBar from '@material-ui/core/AppBar';
@@ -48,8 +49,7 @@ class App extends Component {
       user: false
     };
   }
-
-
+  
   componentWillMount() {
     this.handleLogin();
   }
@@ -78,8 +78,6 @@ class App extends Component {
     })
   }
 
-
-
   render() {
     const { classes } = this.props;
 
@@ -104,6 +102,9 @@ class App extends Component {
                   >
                     <ExitToAppRoundedIcon className={classes.logoutButton} />
                   </IconButton>
+
+                  <Settings/>
+
                 </Toolbar>
               </AppBar>
               <div className={classes.offset} />
@@ -136,8 +137,6 @@ class App extends Component {
         </Router>
       );
     }
-
-
   }
 }
 
