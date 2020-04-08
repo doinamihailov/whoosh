@@ -6,6 +6,7 @@ import Login from "./components/login/Login";
 import ForgottenPassword from "./components/forgottenPassword/ForgottenPassword";
 import RequestRegister from "./components/requestRegister/RequestRegister";
 import Chat from "./components/chat/Chat";
+import Slider from "./components/slider/Slider";
 import Settings from "./components/settings/Settings";
 
 import { withStyles } from '@material-ui/core/styles';
@@ -49,7 +50,7 @@ class App extends Component {
       user: false
     };
   }
-  
+
   componentWillMount() {
     this.handleLogin();
   }
@@ -118,6 +119,7 @@ class App extends Component {
               <Route exact path='/forgottenpassword' component={ForgottenPassword} />
               <Route exact path='/requestregister' component={RequestRegister} />
               <Route exact path='/chat' component={Chat} />
+              <Route exact path='/slider' component={Slider} />
             </Switch>
           </div>
         </Router>
@@ -132,6 +134,7 @@ class App extends Component {
               <Route exact path='/forgottenpassword' component={ForgottenPassword} />
               <Route exact path='/requestregister' component={RequestRegister} />
               <Route exact path='/chat' component={Chat} />
+              <Route exact path='/slider' component={Slider} />
             </Switch>
           </div>
         </Router>
