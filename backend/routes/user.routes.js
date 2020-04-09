@@ -18,10 +18,10 @@ module.exports = app => {
   //change password
   router.post("/changePassword", users.changePassword);
 
-  //change password
+  //edit user
   router.post("/editUser", users.editUser);
 
-  //change password
+  //delete user after email
   router.post("/delete", users.delete);
 
   app.use('/users', router);

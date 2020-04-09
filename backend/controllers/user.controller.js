@@ -209,28 +209,34 @@ exports.resetPassword = (req, res) => {
 }
 
 exports.changePassword = (req, res) => {
-  const user = {
-    first_name: req.body.first_name,
-    last_name: req.body.last_name,
-    email: req.body.email,
-    password: ''
-  };
-  
   bcrypt
     .hash(req.body.password, saltRounds)
     .then(hash => {
-    
-      user.password = hash;
-
       var users = [];
       if(localStorage.getItem('users') !== null){
+
         users = JSON.parse(localStorage.getItem('users'));
-        users = users.filter(x => x.email !== user.email);
-        
-        users.push(user);
-        localStorage.setItem('users', JSON.stringify(users));
-        res.send({
-          message: "user was updated successfully."
+        var oldUser =  users.filter(x => x.email === req.body.email);
+        bcrypt.compare(req.body.password, oldUser[0].password, function(err, result) {
+          if(result) {
+            res.status(403).send({
+              message: "Email can not be empty!"
+            });
+          } else {
+            const user = {
+              first_name: oldUser[0].first_name,
+              last_name: oldUser[0].last_name,
+              email: req.body.email,
+              password: hash
+            };
+            users = users.filter(x => x.email !== user.email);
+            
+            users.push(user);
+            localStorage.setItem('users', JSON.stringify(users));
+            res.send({
+              message: "user was updated successfully."
+            });
+          }
         });
       } else {
         res.status(500).send({
@@ -276,11 +282,11 @@ exports.delete = (req, res) => {
       
     localStorage.setItem('users', JSON.stringify(users));
     res.send({
-        message: "user was updated successfully."
+        message: "user was deleted successfully."
     });
     } else {
       res.status(500).send({
-      message: "Error updating user with email=" + req.body.email
+      message: "Error deleting user with email=" + req.body.email
     });
   }
 }

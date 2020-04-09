@@ -8,6 +8,7 @@ import RequestRegister from "./components/requestRegister/RequestRegister";
 import Chat from "./components/chat/Chat";
 import Slider from "./components/slider/Slider";
 import Settings from "./components/settings/Settings";
+import AccountInfo from "./components/accountInfo/AccountInfo";
 
 import { withStyles } from '@material-ui/core/styles';
 import AppBar from '@material-ui/core/AppBar';
@@ -94,7 +95,9 @@ class App extends Component {
                       Whoosh
                 </Link>
                   </Typography>
-
+                  
+                  <AccountInfo/>
+                  <Settings/>
                   <IconButton
                     edge="start"
                     color="inherit"
@@ -103,8 +106,6 @@ class App extends Component {
                   >
                     <ExitToAppRoundedIcon className={classes.logoutButton} />
                   </IconButton>
-
-                  <Settings/>
 
                 </Toolbar>
               </AppBar>
