@@ -74,7 +74,7 @@ class App extends Component {
 
     localStorage.removeItem('token');
     localStorage.removeItem('currentEmail')
-    window.location = '/login';
+    window.location = '/slider';
     this.setState({
       user: false
     })
@@ -91,11 +91,11 @@ class App extends Component {
               <AppBar position="fixed" className={classes.appbar}>
                 <Toolbar>
                   <Typography variant="h6" className={classes.title}>
-                    <Link to="/login" className="link">
+                    <Link to="/chat" className="link">
                       Whoosh
                     </Link>
                   </Typography>
-                  
+
                   <AccountInfo/>
                   <Settings/>
                   <IconButton
@@ -116,7 +116,7 @@ class App extends Component {
           <div className="App">
             <Switch>
               <Route exact path='/login' handleLogin={this.handleLogin} render={props => <Login {...props} user={this.state.user.toString()} handleLogin={this.handleLogin} />} />
-              <ProtectedRoute exact path='/' handleLogin={this.handleLogin} render={props => <Login {...props} user={this.state.user.toString()} handleLogin={this.handleLogin} />} />
+              <ProtectedRoute exact path='/' component={Chat} />
               <Route exact path='/forgottenpassword' component={ForgottenPassword} />
               <Route exact path='/requestregister' component={RequestRegister} />
               <Route exact path='/chat' component={Chat} />
@@ -131,7 +131,7 @@ class App extends Component {
           <div className="AppLogin">
             <Switch>
               <Route exact path='/login' handleLogin={this.handleLogin} render={props => <Login {...props} user={this.state.user.toString()} handleLogin={this.handleLogin} />} />
-              <ProtectedRoute exact path='/' handleLogin={this.handleLogin} render={props => <Login {...props} user={this.state.user.toString()} handleLogin={this.handleLogin} />} />
+              <ProtectedRoute exact path='/' component={Slider} />
               <Route exact path='/forgottenpassword' component={ForgottenPassword} />
               <Route exact path='/requestregister' component={RequestRegister} />
               <Route exact path='/chat' component={Chat} />
