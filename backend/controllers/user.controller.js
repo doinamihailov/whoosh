@@ -107,21 +107,16 @@ exports.create = (req, res) => {
   //send email with random password
 
   var transporter = nodemailer.createTransport({
-    host: 'aquasoft.ro',
-    port: 465,
-    secure: true, // true for 465, false for other ports
+    service: 'gmail',
     auth: {
-      user: 'deductions@aquasoft.ro', // generated ethereal user
-      pass: 'NkN1ppxbZj&A'
-      //   pass: '!@#$%TREWQ' // generated ethereal password
-    },
-    tls: {
-      rejectUnauthorized: false
-    }
-  });
+           user: 'whooshsevices@gmail.com',
+           pass: 'whooshpass'
+       }
+   });
+
 
   var mailOptions = {
-    from: '"noreply@whoosh.ro"deductions@aquasoft.ro',
+    from: '"noreply@whoosh.ro" whooshsevices@gmail.com',
     to: user.email,
     subject: 'Account created succesfully',
     text: 'Your account was created succesfully!\n' + '\nYour information is:\nFirst name: ' +
@@ -177,21 +172,15 @@ exports.resetPassword = (req, res) => {
     //send email with random password
 
     var transporter = nodemailer.createTransport({
-      host: 'aquasoft.ro',
-      port: 465,
-      secure: true, // true for 465, false for other ports
+      service: 'gmail',
       auth: {
-        user: 'deductions@aquasoft.ro', // generated ethereal user
-        pass: 'NkN1ppxbZj&A'
-        //   pass: '!@#$%TREWQ' // generated ethereal password
-      },
-      tls: {
-        rejectUnauthorized: false
-      }
-    });
+             user: 'whooshsevices@gmail.com',
+             pass: 'whooshpass'
+         }
+     });
 
     var mailOptions = {
-      from: '"noreply@whoosh.ro" deductions@aquasoft.ro',
+      from: '"noreply@whoosh.ro" whooshsevices@gmail.com',
       to: user.email,
       subject: 'Reset password',
       text: 'Your password has been reset succesfully!\n' + '\nYour information is:\nFirst name: ' +
