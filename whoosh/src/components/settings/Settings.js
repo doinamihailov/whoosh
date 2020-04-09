@@ -182,8 +182,6 @@ class Settings extends Component {
   handleEdit = () => {
     this.handleClose();
     var user= [];
-    this.setState({
-    })
     authService.getAllUsers()
     .then((res) => {
       user = res.filter(x => x.email === localStorage.getItem("currentEmail"));

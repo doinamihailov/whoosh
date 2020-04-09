@@ -4,6 +4,10 @@ import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 import AccountCircleIcon from '@material-ui/icons/AccountCircle';
 import AuthenticationService from '../../services/AuthentificationService';
+import ListItem from '@material-ui/core/ListItem';
+import ListItemText from '@material-ui/core/ListItemText';
+import ListItemIcon from '@material-ui/core/ListItemIcon';
+import StarBorder from '@material-ui/icons/StarBorder';
 
 let authService = new AuthenticationService();
 
@@ -15,6 +19,10 @@ const useStyles = makeStyles((theme) => ({
     padding: theme.spacing(1),
   },
 }));
+
+var firstname = '';
+var lastname= '';
+var email = '';
 
 export default function AccountInfo() {
   const classes = useStyles();
@@ -28,8 +36,19 @@ export default function AccountInfo() {
     setAnchorEl(null);
   };
 
+    email = localStorage.getItem("currentEmail");
+    var user= [];
+
+    authService.getAllUsers()
+        .then((res) => {
+            user = res.filter(x => x.email === email);
+            firstname = user[0].first_name;
+            lastname = user[0].last_name;
+        })
+        .catch((err) => {
+        console.log(err);
+        })
   const open = Boolean(anchorEl);
-  const email = localStorage.getItem("currentEmail");
   return (
     <div>
       <Typography
@@ -59,8 +78,13 @@ export default function AccountInfo() {
         onClose={handlePopoverClose}
         disableRestoreFocus
       >
-        <Typography>Account Information</Typography>
-        <Typography># email: {email}</Typography>
+        <Typography>Whoosh account</Typography>
+        <ListItem>
+            {firstname} {lastname}
+        </ListItem>
+        <h6>
+            {email}
+        </h6>
       </Popover>
     </div>
   );
