@@ -92,7 +92,7 @@ class App extends Component {
                   <Typography variant="h6" className={classes.title}>
                     <Link to="/login" className="link">
                       Whoosh
-                </Link>
+                    </Link>
                   </Typography>
 
                   <IconButton

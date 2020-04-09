@@ -1,4 +1,13 @@
+.bg-img {
+  /* The image used */
+  background-image: url("./4809.jpg");
 
-.container{
-	background-image: url(C:\Users\Alex-Monica-George\whoosh\whoosh\src\images\18941.jpg);
-  }
+  /* Control the height of the image */
+  min-height: 380px;
+
+  /* Center and scale the image nicely */
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  position: relative;
+}
