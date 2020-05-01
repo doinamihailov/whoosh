@@ -4,23 +4,68 @@ let jwt = require('jsonwebtoken');
 var crypto = require("crypto");
 var nodemailer = require('nodemailer');
 
-
 var LocalStorage = require('node-localstorage').LocalStorage,
 localStorage = new LocalStorage('./scratch');
 
+var MongoClient = require('mongodb').MongoClient;
+var url = 'mongodb+srv://user:pass@cluster0-ripl0.azure.mongodb.net/test?retryWrites=true&w=majority';
+//HOW TO CREATE A COLLECTION
+/*
+MongoClient.connect(url, function(err, db){
+  console.log("Connected");
+  if(err)
+    console.log(err);
+  else
+    console.log(db);
+  var dbase = db.db("whoosh"); //here
+  dbase.createCollection('users', function(err, collection) {});
+  //var users = dbase.getCollection('users');
+  dbase.collection('users').insertOne({
+    first_name: 'Doina:)',
+    last_name: 'Mihailov',
+    email: 'doinami99@yahoo.com',
+    password: 'ok'
+
+  });
+});
+*/
+
 // retrieve all users
 exports.findAll = (req, res) => {
+  /*
+  //LOCAL STORAGE
   var users = [];
-
   if(localStorage.length !== 0)
     users = JSON.parse(localStorage.getItem('users'));
   res.send(users);
+  //END OF LS
+*/
+  //MONGO
+  MongoClient.connect(url, function(err, db){
+    console.log("Connected");
+    if(err)
+      console.log(err);
+    var dbase = db.db("whoosh");
 
+    try {
+      const results = dbase.collection('users').find().toArray(function(err, result) {
+        if (result.length > 0) {
+          res.send(result);
+        }
+   });
+
+   } catch (e) {
+      console.log(e); 
+      res.status(500).send({
+        message: "Error getting users"
+      });
+   }
+  });
+  //END OF MONGO
 };
 
 // verify login
 exports.login = (req, res) => {
-
   // validate request
   if (!req.body.email) {
     res.status(400).send({
@@ -28,7 +73,58 @@ exports.login = (req, res) => {
     });
     return;
   }
-      var users = [];
+  
+  //MONGO
+  MongoClient.connect(url, function(err, db){
+    console.log("Connected");
+    if(err)
+      console.log(err);
+    var dbase = db.db("whoosh");
+
+    try {
+      const results = dbase.collection('users').find().toArray(function(err, result) {
+        if (result.length > 0) {
+          var oldUser =  result.filter(x => x.email === req.body.email);
+          const pass = oldUser[0].password;
+          bcrypt
+          .compare(req.body.password, pass)
+          .then(res2 => {
+            // a mers
+            if (res2 === true) {
+              let token = jwt.sign({ email: req.body.email },
+                "tokenSerializer",
+                {
+                  expiresIn: '24h' // expires in 24 hours
+                }
+              );
+              // return the JWT token for the future API calls
+              res.json({
+                success: true,
+                message: 'Authentication successful!',
+                token: token
+              });
+  
+            }
+            else {
+              res.status(403).send({
+                message: 'Incorrect username or password'
+              });
+            }
+          })
+          .catch(err => console.error(err.message));
+        }
+   });
+
+   } catch (e) {
+      console.log(e); 
+      res.status(500).send({
+        message: "Error getting users"
+      });
+   }
+  });
+
+  // LOCAL STORAGE
+   /*   var users = [];
 
       if(localStorage.length !== 0)
         users = JSON.parse(localStorage.getItem('users'));
@@ -60,7 +156,7 @@ exports.login = (req, res) => {
             });
           }
         })
-        .catch(err => console.error(err.message))
+        .catch(err => console.error(err.message))*/
 };
 
 exports.create = (req, res) => {
@@ -86,9 +182,21 @@ exports.create = (req, res) => {
   bcrypt
     .hash(randomPass, saltRounds)
     .then(hash => {
-
-      // Store hash in your password DB.
+      
       user.password = hash;
+      //STORE IN MONGODB
+
+      MongoClient.connect(url, function(err, db){
+        console.log("Connected");
+        if(err)
+          console.log(err);
+        var dbase = db.db("whoosh"); //here
+        //var users = dbase.getCollection('users');
+        dbase.collection('users').insertOne(user);
+      });
+      //END OF MONGODB
+      /*
+      // START OF LOCALSTORAGE
         var users = [];
         if(localStorage.getItem('users') !== null)
           users = JSON.parse(localStorage.getItem('users'));
@@ -99,6 +207,8 @@ exports.create = (req, res) => {
        
         localStorage.setItem('users', JSON.stringify(users));
         console.log(JSON.stringify(users));
+      //END OF LOCAL STORAGE
+      */
         res.send("ok");
 
     })
@@ -151,6 +261,31 @@ exports.resetPassword = (req, res) => {
 
       // Store hash in your password DB.
       user.password = hash;
+
+      //START OF MONGODB
+      MongoClient.connect(url, function(err, db){
+        console.log("Connected");
+        if(err)
+          console.log(err);
+        var dbase = db.db("whoosh");
+
+        try {
+          dbase.collection('users').replaceOne( { 'email' : req.body.email}, user );
+          res.send({
+            message: "user was edited successfully."
+          });
+          
+      } catch (e) {
+          console.log(e); 
+          res.status(500).send({
+            message: "Error editing user with email=" + req.body.email
+          });
+      }
+      });
+      //END OF MONGODBB
+
+      //LOCAL STORAGE
+      /*
       var users = [];
       if(localStorage.getItem('users') !== null){
         users = JSON.parse(localStorage.getItem('users'));
@@ -165,7 +300,7 @@ exports.resetPassword = (req, res) => {
           res.status(500).send({
             message: "Error updating user with email=" + req.body.email
           });
-        }
+        }*/
     })
     .catch(err => console.error(err.message));
 
@@ -201,6 +336,50 @@ exports.changePassword = (req, res) => {
   bcrypt
     .hash(req.body.password, saltRounds)
     .then(hash => {
+
+      //MONGO
+
+      MongoClient.connect(url, function(err, db){
+        console.log("Connected");
+        if(err)
+          console.log(err);
+        var dbase = db.db("whoosh");
+    
+        try {
+          const results = dbase.collection('users').find().toArray(function(err, result) {
+            if (result.length > 0) {
+              var oldUser =  result.filter(x => x.email === req.body.email);
+              const user = {
+                first_name: oldUser[0].first_name,
+                last_name: oldUser[0].last_name,
+                email: req.body.email,
+                password: hash
+              };
+              try {
+                dbase.collection('users').replaceOne( { 'email' : req.body.email}, user );
+                res.send({
+                  message: "pass was edited successfully."
+                });
+                
+              } catch (e) {
+                  console.log(e); 
+                  res.status(500).send({
+                    message: "Error changing pass for user with email=" + req.body.email
+                  });
+              }
+            }
+       });
+    
+       } catch (e) {
+          console.log(e); 
+          res.status(500).send({
+            message: "Error getting users"
+          });
+       }
+      });
+
+      //LOCAL STORAGE
+      /*
       var users = [];
       if(localStorage.getItem('users') !== null){
 
@@ -232,7 +411,7 @@ exports.changePassword = (req, res) => {
         message: "Error updating user with email=" + req.body.email
         });
       }
-      
+      */
     })
     .catch(err => console.error(err.message));
  }
@@ -244,6 +423,30 @@ exports.changePassword = (req, res) => {
     email: req.body.email,
     password: req.body.password
   };
+
+  //START OF MONGODB
+  MongoClient.connect(url, function(err, db){
+    console.log("Connected");
+    if(err)
+      console.log(err);
+    var dbase = db.db("whoosh");
+
+    try {
+      dbase.collection('users').replaceOne( { 'email' : req.body.email}, user );
+      res.send({
+        message: "user was edited successfully."
+      });
+      
+   } catch (e) {
+      console.log(e); 
+      res.status(500).send({
+        message: "Error editing user with email=" + req.body.email
+      });
+   }
+  });
+  //END OF MONGODBB
+  /*
+  //START OF LOCAL STORAGE
   var users = [];
 
   if(localStorage.getItem('users') !== null){
@@ -260,11 +463,34 @@ exports.changePassword = (req, res) => {
       message: "Error updating user with email=" + req.body.email
     });
   }
+  //END OF LOCAL STORAGE*/
 }
 
 exports.delete = (req, res) => {
   var users = [];
-  
+  //START OF MONGODB
+  MongoClient.connect(url, function(err, db){
+    console.log("Connected");
+    if(err)
+      console.log(err);
+    var dbase = db.db("whoosh");
+
+    try {
+      dbase.collection('users').deleteOne( { 'email' : req.body.email} );
+      res.send({
+        message: "user was deleted successfully."
+      });
+      
+   } catch (e) {
+      console.log(e); 
+      res.status(500).send({
+        message: "Error deleting user with email=" + req.body.email
+      });
+   }
+  });
+  //END OF MONGODBB
+  /*
+  //START OF LOCALSTORAGE
   if(localStorage.getItem('users') !== null){
     users = JSON.parse(localStorage.getItem('users'));
     users = users.filter(x => x.email !== req.body.email);
@@ -277,5 +503,6 @@ exports.delete = (req, res) => {
       res.status(500).send({
       message: "Error deleting user with email=" + req.body.email
     });
-  }
+  }*/
+  // END OF LOCAL STORAGE
 }

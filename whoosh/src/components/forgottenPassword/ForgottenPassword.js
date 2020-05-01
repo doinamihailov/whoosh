@@ -49,7 +49,7 @@ export default class ForgottenPassword extends Component {
         console.log(res)
         const user = res.filter(x => x.email === this.state.email);
         if (user.length === 0)
-            this.setState({message: "Incorrect email address!"});
+            this.setState({message: "Inexistent email address!"});
         else {
 
           user[0].password = '';
