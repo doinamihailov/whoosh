@@ -3,6 +3,7 @@ import axios from 'axios';
 import Link from '@material-ui/core/Link';
 import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
+import Background from '../../images/cl.jpeg';
 
 const URL = process.env.REACT_APP_URL;
 
@@ -61,7 +62,7 @@ export default class Login extends Component {
   render() {
     return (
       <div className="auth-wrapper">
-        <div className="auth-inner">
+        <div className="auth-inner" style={{ backgroundImage: `url(${Background})`}}>
           <form onSubmit={this.handleSubmit}>
             <h3>Log In</h3>
             <Typography variant="subtitle1" color="error">

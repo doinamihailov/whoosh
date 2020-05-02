@@ -12,6 +12,7 @@ import FormControlLabel from '@material-ui/core/FormControlLabel';
 import FormControl from '@material-ui/core/FormControl';
 import IconButton from "@material-ui/core/IconButton";
 import InputAdornment from "@material-ui/core/InputAdornment";
+import Background from '../../images/plant.jpg';
 
 import TollSharpIcon from '@material-ui/icons/TollSharp';
 
@@ -96,7 +97,7 @@ class Welcome extends Component {
 
   render() {
     return (
-      <div className="card page">
+      <div className="card page" style={{ backgroundImage: `url(${Background})`}}>
         <Title title={this.state.message} class="title-80" variant="h4" align="center" />
         <div
           style={{
@@ -104,8 +105,7 @@ class Welcome extends Component {
               transform: 'translate(-50%, -50%)'
           }}
           >
-        <Button variant="outlined" color="primary"onClick={() => { this.setState({addModal: true}) }}>Start a conversation</Button>
-        <br></br>
+        <Button variant="outlined" color="primary" style={{ fontSize: 15 }} onClick={() => { this.setState({addModal: true}) }}>Start a conversation</Button>
         <br></br>
         </div>
         <div
