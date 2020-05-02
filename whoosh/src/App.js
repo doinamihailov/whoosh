@@ -6,6 +6,7 @@ import Login from "./components/login/Login";
 import ForgottenPassword from "./components/forgottenPassword/ForgottenPassword";
 import RequestRegister from "./components/requestRegister/RequestRegister";
 import Welcome from "./components/welcome/Welcome";
+import Chat from "./components/chat/Chat";
 import Slider from "./components/slider/Slider";
 import Settings from "./components/settings/Settings";
 import AccountInfo from "./components/accountInfo/AccountInfo";
@@ -140,12 +141,9 @@ class App extends Component {
 
           <div className="App">
             <Switch>
-              <Route exact path='/login' handleLogin={this.handleLogin} render={props => <Login {...props} user={this.state.user.toString()} handleLogin={this.handleLogin} />} />
               <ProtectedRoute exact path='/' component={Welcome} />
-              <Route exact path='/forgottenpassword' component={ForgottenPassword} />
-              <Route exact path='/requestregister' component={RequestRegister} />
               <Route exact path='/welcome' component={Welcome} />
-              <Route exact path='/slider' component={Slider} />
+              <Route exact path='/chat' component={Chat} />
             </Switch>
           </div>
         </Router>
@@ -159,7 +157,6 @@ class App extends Component {
               <ProtectedRoute exact path='/' component={Slider} />
               <Route exact path='/forgottenpassword' component={ForgottenPassword} />
               <Route exact path='/requestregister' component={RequestRegister} />
-              <Route exact path='/welcome' component={Welcome} />
               <Route exact path='/slider' component={Slider} />
             </Switch>
           </div>
