@@ -17,6 +17,9 @@ import IconButton from '@material-ui/core/IconButton';
 import Typography from '@material-ui/core/Typography';
 import ExitToAppRoundedIcon from '@material-ui/icons/ExitToAppRounded';
 import ProtectedRoute from './ProtectedRoute';
+import AuthenticationService from './services/AuthentificationService';
+
+let authService = new AuthenticationService();
 
 
 const styles = (theme) => ({
@@ -61,6 +64,18 @@ class App extends Component {
       this.setState({
         user: true
       })
+
+      const form = new FormData();
+      const email = localStorage.getItem("currentEmail");
+      form.set('email', email);
+      form.set('online', true); 
+      authService.changeStatus(form)
+        .then((res) => {
+            console.log('logged in');
+        })
+        .catch((err) => {
+            console.error(err);
+        }) 
     }
     else {
       this.setState({
@@ -71,13 +86,23 @@ class App extends Component {
 
   handleLogout = e => {
     e.preventDefault();
-
+    const form = new FormData();
+      const email = localStorage.getItem("currentEmail");
+      form.set('email', email);
+      form.set('online', false); 
+      authService.changeStatus(form)
+        .then((res) => {
+            console.log('logged in');
+        })
+        .catch((err) => {
+            console.error(err);
+        }) 
     localStorage.removeItem('token');
-    localStorage.removeItem('currentEmail')
-    window.location = '/slider';
+    localStorage.removeItem('currentEmail');
     this.setState({
       user: false
     })
+    window.location = '/slider';
   }
 
   render() {

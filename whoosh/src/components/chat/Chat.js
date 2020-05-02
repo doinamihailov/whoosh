@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { Component, Fragment } from "react";
 import "./Chat.css";
 import Title from '../title/Title';
 import Button from '@material-ui/core/Button';
@@ -7,6 +7,14 @@ import Dialog from '@material-ui/core/Dialog';
 import TextField from '@material-ui/core/TextField';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogActions from '@material-ui/core/DialogActions';
+import Autocomplete from '@material-ui/lab/Autocomplete';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
+import FormControl from '@material-ui/core/FormControl';
+import IconButton from "@material-ui/core/IconButton";
+import InputAdornment from "@material-ui/core/InputAdornment";
+
+import TollSharpIcon from '@material-ui/icons/TollSharp';
+
 import AuthenticationService from '../../services/AuthentificationService';
 let authService = new AuthenticationService();
 
@@ -20,7 +28,16 @@ class Chat extends Component {
       lastname: '',
       message: '',
       addModal: false,
+      users: [],
+      selectedContact: {email:''},
     };
+  }
+
+  componentWillMount() {
+    this.startWelcome();
+  }
+
+  startWelcome() {
     const email = localStorage.getItem("currentEmail");
 
     var user= [];
@@ -32,13 +49,42 @@ class Chat extends Component {
               email: email,
               firstname: user[0].first_name,
               lastname: user[0].last_name,
-              message: "Welcome, " + user[0].first_name + "!"
-            })
+              message: "Welcome, " + user[0].first_name + "!",
+              users: res,
+            });
+            //console.log(this.state.users);
         })
         .catch((err) => {
         console.log(err);
         })
   }
+
+  handleChangeContact(newValue) {
+    this.setState({
+      selectedContact: newValue
+  })
+  }
+
+  renderIcon = (el) => {
+    if(el.online === 'false')
+      return (
+        <IconButton>
+          <TollSharpIcon style={{ fill:'#e57373' }} />
+        </IconButton>
+      );
+    return (
+      <IconButton>
+        <TollSharpIcon style={{ fill:'#76ff03' }}/>
+      </IconButton>
+      );
+  }
+
+  handleSelect = () => {
+    console.log(this.state.selectedContact);
+    this.setState({
+        addModal: false,
+    })
+  };
 
   handleClose = () => {
     this.setState({
@@ -78,11 +124,48 @@ class Chat extends Component {
             <Title class="title-20" title="New chat" variant="h5" align="left" />
           </DialogTitle>
           <DialogContent>
-              <p> Search bar</p>
+              <p> Please select a contact</p>
+              <FormControl>
+                  <Autocomplete
+                    id="tags-standard"
+                    size="small"
+                    style={{ width: 300 }}
+                    className="autoselect"
+                    options={this.state.users}
+                    getOptionLabel={(option) => option.email}
+                    renderOption={(option) => {
+                      return (
+                        <Fragment>
+                          {option.email}
+                          {this.renderIcon(option)}
+                        </Fragment>
+                      );
+
+                    }
+                    }
+                    value={this.state.selectedContact}
+                    onChange={(event, newValue) => {
+                        this.handleChangeContact(newValue)
+                    }}
+                    renderInput={(params) => (
+                    <div>
+                      <TextField
+                       {...params}
+                        variant="standard"
+                        label=""
+                       placeholder="Search"     
+                      />
+                   </div>
+                  )}
+                  />
+              </FormControl>
           </DialogContent>
           <DialogActions>
-              <Button onClick={this.handleClose} variant="outlined">
-                  x
+              <Button onClick={this.handleSelect} color="primary">
+                  Select
+              </Button>
+              <Button onClick={this.handleClose} color="secondary">
+                  Cancel
               </Button>
           </DialogActions>
         </Dialog>
