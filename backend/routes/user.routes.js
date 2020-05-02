@@ -24,5 +24,8 @@ module.exports = app => {
   //delete user after email
   router.post("/delete", users.delete);
 
+  //edit user
+  router.post("/changeStatus", users.changeStatus);
+
   app.use('/users', router);
 };

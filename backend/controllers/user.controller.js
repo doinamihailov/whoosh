@@ -105,7 +105,8 @@ exports.create = (req, res) => {
     first_name: req.body.first_name,
     last_name: req.body.last_name,
     email: req.body.email,
-    password: ''
+    password: '',
+    online: "false",
   };
 
   var randomPass = crypto.randomBytes(4).toString('hex');
@@ -165,6 +166,7 @@ exports.resetPassword = (req, res) => {
     last_name: req.body.last_name,
     email: req.body.email,
     password: '',
+    online: false,
   };
   var randomPass = crypto.randomBytes(4).toString('hex');
   console.log(randomPass);
@@ -241,7 +243,8 @@ exports.changePassword = (req, res) => {
                 first_name: oldUser[0].first_name,
                 last_name: oldUser[0].last_name,
                 email: req.body.email,
-                password: hash
+                password: hash,
+                online: oldUser[0].online,
               };
               try {
                 dbase.collection('users').replaceOne( { 'email' : req.body.email}, user );
@@ -274,7 +277,8 @@ exports.changePassword = (req, res) => {
     first_name: req.body.first_name,
     last_name: req.body.last_name,
     email: req.body.email,
-    password: req.body.password
+    password: req.body.password,
+    online: true,
   };
   MongoClient.connect(url, { useUnifiedTopology: true }, function(err, db){
     console.log("Connected for editing user");
@@ -315,6 +319,48 @@ exports.delete = (req, res) => {
       console.log(e); 
       res.status(500).send({
         message: "Error deleting user with email=" + req.body.email
+      });
+   }
+  });
+}
+
+exports.changeStatus = (req, res) => {
+  MongoClient.connect(url, { useUnifiedTopology: true }, function(err, db){
+    console.log("Connected for changing the state");
+    if(err)
+      console.log(err);
+    var dbase = db.db("whoosh");
+
+
+    try {
+      const results = dbase.collection('users').find().toArray(function(err, result) {
+        if (result.length > 0) {
+          var oldUser =  result.filter(x => x.email === req.body.email);
+          const user = {
+            first_name: oldUser[0].first_name,
+            last_name: oldUser[0].last_name,
+            email: req.body.email,
+            password: oldUser[0].password,
+            online: req.body.online,
+          };
+          try {
+            dbase.collection('users').replaceOne( { 'email' : req.body.email}, user );
+            res.send({
+              message: "status was edited successfully."
+            });
+            
+          } catch (e) {
+              console.log(e); 
+              res.status(500).send({
+                message: "Error changing status for user with email=" + req.body.email
+              });
+          }
+        }
+   });
+   } catch (e) {
+      console.log(e); 
+      res.status(500).send({
+        message: "Error getting users"
       });
    }
   });
