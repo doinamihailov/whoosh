@@ -84,6 +84,8 @@ class Welcome extends Component {
     this.setState({
         addModal: false,
     })
+    localStorage.setItem("currentContact", JSON.stringify(this.state.selectedContact));
+    this.props.history.push('/chat');
   };
 
   handleClose = () => {
