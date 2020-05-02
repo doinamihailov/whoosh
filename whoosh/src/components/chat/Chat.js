@@ -2,6 +2,11 @@ import React, { Component } from "react";
 import "./Chat.css";
 import Title from '../title/Title';
 import Button from '@material-ui/core/Button';
+import DialogTitle from '@material-ui/core/DialogTitle';
+import Dialog from '@material-ui/core/Dialog';
+import TextField from '@material-ui/core/TextField';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogActions from '@material-ui/core/DialogActions';
 import AuthenticationService from '../../services/AuthentificationService';
 let authService = new AuthenticationService();
 
@@ -14,6 +19,7 @@ class Chat extends Component {
       firstname: '',
       lastname: '',
       message: '',
+      addModal: false,
     };
     const email = localStorage.getItem("currentEmail");
 
@@ -34,6 +40,12 @@ class Chat extends Component {
         })
   }
 
+  handleClose = () => {
+    this.setState({
+        addModal: false,
+    })
+};
+
   render() {
     return (
       <div className="card page">
@@ -44,7 +56,7 @@ class Chat extends Component {
               transform: 'translate(-50%, -50%)'
           }}
           >
-        <Button color="primary">Start a conversation</Button>
+        <Button variant="outlined" color="primary"onClick={() => { this.setState({addModal: true}) }}>Start a conversation</Button>
         <br></br>
         <br></br>
         </div>
@@ -56,6 +68,26 @@ class Chat extends Component {
           >
         <h6 >  Search for someone to start chatting with.</h6>
         </div>
+
+        {/*DIALOG FOR SEARCHING CONTACT*/}
+        <Dialog
+            open={this.state.addModal}
+            onClose={this.handleClose}
+        >
+           <DialogTitle id="form-dialog-title">
+            <Title class="title-20" title="New chat" variant="h5" align="left" />
+          </DialogTitle>
+          <DialogContent>
+              <p> Search bar</p>
+          </DialogContent>
+          <DialogActions>
+              <Button onClick={this.handleClose} variant="outlined">
+                  x
+              </Button>
+          </DialogActions>
+        </Dialog>
+
+
       </div >
     );
   }

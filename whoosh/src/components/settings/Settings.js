@@ -212,12 +212,12 @@ class Settings extends Component {
         addModalOpenMessage: true
     })
     };
-    handleCloseMessage = () => {
-        this.setState({
-            addModalOpenMessage: false,
-            messageModal: '',
-        })
-    };
+  handleCloseMessage = () => {
+     this.setState({
+        addModalOpenMessage: false,
+        messageModal: '',
+    })
+  };
   render() {
     return (
         <div>

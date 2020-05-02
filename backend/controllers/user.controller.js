@@ -9,40 +9,11 @@ localStorage = new LocalStorage('./scratch');
 
 var MongoClient = require('mongodb').MongoClient;
 var url = 'mongodb+srv://user:pass@cluster0-ripl0.azure.mongodb.net/test?retryWrites=true&w=majority';
-//HOW TO CREATE A COLLECTION
-/*
-MongoClient.connect(url, function(err, db){
-  console.log("Connected");
-  if(err)
-    console.log(err);
-  else
-    console.log(db);
-  var dbase = db.db("whoosh"); //here
-  dbase.createCollection('users', function(err, collection) {});
-  //var users = dbase.getCollection('users');
-  dbase.collection('users').insertOne({
-    first_name: 'Doina:)',
-    last_name: 'Mihailov',
-    email: 'doinami99@yahoo.com',
-    password: 'ok'
-
-  });
-});
-*/
 
 // retrieve all users
 exports.findAll = (req, res) => {
-  /*
-  //LOCAL STORAGE
-  var users = [];
-  if(localStorage.length !== 0)
-    users = JSON.parse(localStorage.getItem('users'));
-  res.send(users);
-  //END OF LS
-*/
-  //MONGO
-  MongoClient.connect(url, function(err, db){
-    console.log("Connected");
+  MongoClient.connect(url, { useUnifiedTopology: true }, function(err, db){
+    console.log("Connected for retrieving users");
     if(err)
       console.log(err);
     var dbase = db.db("whoosh");
@@ -61,7 +32,6 @@ exports.findAll = (req, res) => {
       });
    }
   });
-  //END OF MONGO
 };
 
 // verify login
@@ -73,10 +43,8 @@ exports.login = (req, res) => {
     });
     return;
   }
-  
-  //MONGO
-  MongoClient.connect(url, function(err, db){
-    console.log("Connected");
+  MongoClient.connect(url, { useUnifiedTopology: true },  function(err, db){
+    console.log("Connected for login");
     if(err)
       console.log(err);
     var dbase = db.db("whoosh");
@@ -122,41 +90,6 @@ exports.login = (req, res) => {
       });
    }
   });
-
-  // LOCAL STORAGE
-   /*   var users = [];
-
-      if(localStorage.length !== 0)
-        users = JSON.parse(localStorage.getItem('users'));
-      const user = users.filter(x => x.email === req.body.email);
-      const pass = user[0].password;
-
-      bcrypt
-        .compare(req.body.password, pass)
-        .then(res2 => {
-          // a mers
-          if (res2 === true) {
-            let token = jwt.sign({ email: req.body.email },
-              "tokenSerializer",
-              {
-                expiresIn: '24h' // expires in 24 hours
-              }
-            );
-            // return the JWT token for the future API calls
-            res.json({
-              success: true,
-              message: 'Authentication successful!',
-              token: token
-            });
-
-          }
-          else {
-            res.status(403).send({
-              message: 'Incorrect username or password'
-            });
-          }
-        })
-        .catch(err => console.error(err.message))*/
 };
 
 exports.create = (req, res) => {
@@ -184,46 +117,28 @@ exports.create = (req, res) => {
     .then(hash => {
       
       user.password = hash;
-      //STORE IN MONGODB
 
-      MongoClient.connect(url, function(err, db){
-        console.log("Connected");
+      //STORE IN MONGODB
+      MongoClient.connect(url, { useUnifiedTopology: true }, function(err, db){
+        console.log("Connected for register");
         if(err)
           console.log(err);
         var dbase = db.db("whoosh"); //here
-        //var users = dbase.getCollection('users');
         dbase.collection('users').insertOne(user);
       });
-      //END OF MONGODB
-      /*
-      // START OF LOCALSTORAGE
-        var users = [];
-        if(localStorage.getItem('users') !== null)
-          users = JSON.parse(localStorage.getItem('users'));
-        
-        users.push(user);
-        console.log("in create users avem:");
-        console.log(users);
-       
-        localStorage.setItem('users', JSON.stringify(users));
-        console.log(JSON.stringify(users));
-      //END OF LOCAL STORAGE
-      */
-        res.send("ok");
+      res.send("ok");
 
     })
     .catch(err => console.error(err.message));
 
   //send email with random password
-
-  var transporter = nodemailer.createTransport({
+   var transporter = nodemailer.createTransport({
     service: 'gmail',
     auth: {
            user: 'whooshsevices@gmail.com',
            pass: 'whooshpass'
        }
    });
-
 
   var mailOptions = {
     from: '"noreply@whoosh.ro" whooshsevices@gmail.com',
@@ -242,9 +157,7 @@ exports.create = (req, res) => {
       console.log('Email sent: ' + info.response);
     }
   });
-
 };
-
 
 exports.resetPassword = (req, res) => {
   const user = {
@@ -261,10 +174,8 @@ exports.resetPassword = (req, res) => {
 
       // Store hash in your password DB.
       user.password = hash;
-
-      //START OF MONGODB
-      MongoClient.connect(url, function(err, db){
-        console.log("Connected");
+      MongoClient.connect(url, { useUnifiedTopology: true },  function(err, db){
+        console.log("Connected for reset password");
         if(err)
           console.log(err);
         var dbase = db.db("whoosh");
@@ -282,30 +193,10 @@ exports.resetPassword = (req, res) => {
           });
       }
       });
-      //END OF MONGODBB
-
-      //LOCAL STORAGE
-      /*
-      var users = [];
-      if(localStorage.getItem('users') !== null){
-        users = JSON.parse(localStorage.getItem('users'));
-        users = users.filter(x => x.email !== user.email);
-        
-        users.push(user);
-        localStorage.setItem('users', JSON.stringify(users));
-        res.send({
-            message: "user was updated successfully."
-        });
-        } else {
-          res.status(500).send({
-            message: "Error updating user with email=" + req.body.email
-          });
-        }*/
     })
     .catch(err => console.error(err.message));
 
     //send email with random password
-
     var transporter = nodemailer.createTransport({
       service: 'gmail',
       auth: {
@@ -336,11 +227,8 @@ exports.changePassword = (req, res) => {
   bcrypt
     .hash(req.body.password, saltRounds)
     .then(hash => {
-
-      //MONGO
-
-      MongoClient.connect(url, function(err, db){
-        console.log("Connected");
+      MongoClient.connect(url, { useUnifiedTopology: true }, function(err, db){
+        console.log("Connected for change password");
         if(err)
           console.log(err);
         var dbase = db.db("whoosh");
@@ -377,41 +265,6 @@ exports.changePassword = (req, res) => {
           });
        }
       });
-
-      //LOCAL STORAGE
-      /*
-      var users = [];
-      if(localStorage.getItem('users') !== null){
-
-        users = JSON.parse(localStorage.getItem('users'));
-        var oldUser =  users.filter(x => x.email === req.body.email);
-        bcrypt.compare(req.body.password, oldUser[0].password, function(err, result) {
-          if(result) {
-            res.status(403).send({
-              message: "Email can not be empty!"
-            });
-          } else {
-            const user = {
-              first_name: oldUser[0].first_name,
-              last_name: oldUser[0].last_name,
-              email: req.body.email,
-              password: hash
-            };
-            users = users.filter(x => x.email !== user.email);
-            
-            users.push(user);
-            localStorage.setItem('users', JSON.stringify(users));
-            res.send({
-              message: "user was updated successfully."
-            });
-          }
-        });
-      } else {
-        res.status(500).send({
-        message: "Error updating user with email=" + req.body.email
-        });
-      }
-      */
     })
     .catch(err => console.error(err.message));
  }
@@ -423,10 +276,8 @@ exports.changePassword = (req, res) => {
     email: req.body.email,
     password: req.body.password
   };
-
-  //START OF MONGODB
-  MongoClient.connect(url, function(err, db){
-    console.log("Connected");
+  MongoClient.connect(url, { useUnifiedTopology: true }, function(err, db){
+    console.log("Connected for editing user");
     if(err)
       console.log(err);
     var dbase = db.db("whoosh");
@@ -444,33 +295,12 @@ exports.changePassword = (req, res) => {
       });
    }
   });
-  //END OF MONGODBB
-  /*
-  //START OF LOCAL STORAGE
-  var users = [];
-
-  if(localStorage.getItem('users') !== null){
-    users = JSON.parse(localStorage.getItem('users'));
-    users = users.filter(x => x.email !== user.email);
-        
-    users.push(user);
-    localStorage.setItem('users', JSON.stringify(users));
-    res.send({
-        message: "user was updated successfully."
-    });
-    } else {
-      res.status(500).send({
-      message: "Error updating user with email=" + req.body.email
-    });
-  }
-  //END OF LOCAL STORAGE*/
 }
 
 exports.delete = (req, res) => {
   var users = [];
-  //START OF MONGODB
-  MongoClient.connect(url, function(err, db){
-    console.log("Connected");
+  MongoClient.connect(url, { useUnifiedTopology: true }, function(err, db){
+    console.log("Connected for deleting user");
     if(err)
       console.log(err);
     var dbase = db.db("whoosh");
@@ -488,21 +318,4 @@ exports.delete = (req, res) => {
       });
    }
   });
-  //END OF MONGODBB
-  /*
-  //START OF LOCALSTORAGE
-  if(localStorage.getItem('users') !== null){
-    users = JSON.parse(localStorage.getItem('users'));
-    users = users.filter(x => x.email !== req.body.email);
-      
-    localStorage.setItem('users', JSON.stringify(users));
-    res.send({
-        message: "user was deleted successfully."
-    });
-    } else {
-      res.status(500).send({
-      message: "Error deleting user with email=" + req.body.email
-    });
-  }*/
-  // END OF LOCAL STORAGE
 }
