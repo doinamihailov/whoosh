@@ -1,5 +1,5 @@
 import React, { Component, Fragment } from "react";
-import "./Chat.css";
+import "./Welcome.css";
 import Title from '../title/Title';
 import Button from '@material-ui/core/Button';
 import DialogTitle from '@material-ui/core/DialogTitle';
@@ -18,7 +18,7 @@ import TollSharpIcon from '@material-ui/icons/TollSharp';
 import AuthenticationService from '../../services/AuthentificationService';
 let authService = new AuthenticationService();
 
-class Chat extends Component {
+class Welcome extends Component {
 
   constructor(props) {
     super(props);
@@ -176,4 +176,4 @@ class Chat extends Component {
   }
 }
 
-export default Chat;
+export default Welcome;

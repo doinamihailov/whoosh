@@ -42,7 +42,7 @@ export default class Login extends Component {
         localStorage.setItem("token", res.data.token);
         localStorage.setItem("currentEmail", data.email);
         this.props.handleLogin()
-        this.props.history.push('/chat')
+        this.props.history.push('/welcome')
         console.log(this.props.history)
       })
       .catch(error => {

@@ -5,7 +5,7 @@ import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
 import Login from "./components/login/Login";
 import ForgottenPassword from "./components/forgottenPassword/ForgottenPassword";
 import RequestRegister from "./components/requestRegister/RequestRegister";
-import Chat from "./components/chat/Chat";
+import Welcome from "./components/welcome/Welcome";
 import Slider from "./components/slider/Slider";
 import Settings from "./components/settings/Settings";
 import AccountInfo from "./components/accountInfo/AccountInfo";
@@ -116,7 +116,7 @@ class App extends Component {
               <AppBar position="fixed" className={classes.appbar}>
                 <Toolbar>
                   <Typography variant="h6" className={classes.title}>
-                    <Link to="/chat" className="link">
+                    <Link to="/welcome" className="link">
                       Whoosh
                     </Link>
                   </Typography>
@@ -141,10 +141,10 @@ class App extends Component {
           <div className="App">
             <Switch>
               <Route exact path='/login' handleLogin={this.handleLogin} render={props => <Login {...props} user={this.state.user.toString()} handleLogin={this.handleLogin} />} />
-              <ProtectedRoute exact path='/' component={Chat} />
+              <ProtectedRoute exact path='/' component={Welcome} />
               <Route exact path='/forgottenpassword' component={ForgottenPassword} />
               <Route exact path='/requestregister' component={RequestRegister} />
-              <Route exact path='/chat' component={Chat} />
+              <Route exact path='/welcome' component={Welcome} />
               <Route exact path='/slider' component={Slider} />
             </Switch>
           </div>
@@ -159,7 +159,7 @@ class App extends Component {
               <ProtectedRoute exact path='/' component={Slider} />
               <Route exact path='/forgottenpassword' component={ForgottenPassword} />
               <Route exact path='/requestregister' component={RequestRegister} />
-              <Route exact path='/chat' component={Chat} />
+              <Route exact path='/welcome' component={Welcome} />
               <Route exact path='/slider' component={Slider} />
             </Switch>
           </div>
