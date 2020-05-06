@@ -8,7 +8,10 @@
     "heroku-postbuild": "NPM_CONFIG_PRODUCTION=false npm install npm && run build"
 
   },
-  "keywords": [],
+  "keywords": [
+    "example", 
+    "heroku"
+  ],
   "author": "",
   "license": "ISC",
   "dependencies": {
@@ -32,5 +35,8 @@
     "sequelize-cli": "^5.5.1",
     "tempfile": "^3.0.0",
     "window": "^4.2.7"
+  },
+  "engines": {
+    "node": "12.x"
   }
 }
