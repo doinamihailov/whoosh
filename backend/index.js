@@ -6,4 +6,5 @@ const fs = require('fs');
 /*db.sync().catch(error => {
     console.log(error)
 });*/
-app.listen(port, () => console.log(`started on port ${port}`));
+let port2 = process.env.PORT || port;
+app.listen(port2, () => console.log(`started on port ${port2}`));
