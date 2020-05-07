@@ -1,4 +1,4 @@
-Instant messaging app
+Instant messaging app (MERN app)
 
 Commands for running the app:
 
