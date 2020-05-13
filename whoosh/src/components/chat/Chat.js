@@ -15,6 +15,18 @@ import CardMedia from '@material-ui/core/CardMedia';
 import CardContent from '@material-ui/core/CardContent';
 import CardActions from '@material-ui/core/CardActions';
 import Background from '../../images/vama.jpeg';
+import FilledInput from '@material-ui/core/FilledInput';
+import FormControl from '@material-ui/core/FormControl';
+import FormHelperText from '@material-ui/core/FormHelperText';
+import Input from '@material-ui/core/Input';
+import InputLabel from '@material-ui/core/InputLabel';
+import OutlinedInput from '@material-ui/core/OutlinedInput';
+import TextField from '@material-ui/core/TextField';
+import TelegramIcon from '@material-ui/icons/Telegram';
+import ChatMessage from '../chatMessage/ChatMessage'
+import ChatLayout from "../chatLayout/ChatLayout";
+
+const URL = 'ws://localhost:3030'
 
 
 class Chat extends Component {
@@ -23,8 +35,40 @@ class Chat extends Component {
     super(props);
     this.state = {
         contact: '',
+        newMessage: '',
+        socket : '',
+        messages: [],
     };
+    this.ws = new WebSocket(URL)
+
+    
   }
+  componentDidMount() {
+    this.ws.onopen = () => {
+      // on connecting, do nothing but log it to the console
+      console.log('connected')
+    }
+
+    this.ws.onmessage = evt => {
+      // on receiving a message, add it to the list of messages
+      let message = JSON.parse(evt.data)
+      message.direction = 'right';
+      console.log(message)
+      this.addMessage(message)
+    }
+
+    this.ws.onclose = () => {
+      console.log('disconnected')
+      // automatically try to reconnect on connection loss
+      this.setState({
+        ws: new WebSocket(URL),
+      })
+    }
+  }
+
+  addMessage = message =>
+    this.setState(state => ({ messages: [...state.messages, message] }))
+
   componentWillMount() {
     const contact  = JSON.parse(localStorage.getItem('currentContact'));
     this.setState({
@@ -53,11 +97,29 @@ class Chat extends Component {
       );
   }
 
+  handleChange = (event) => {
+    this.setState({
+      newMessage: event.target.value,
+  });
+  };
+
+  handleClickSend = (e) => {
+    e.preventDefault();
+
+    const message = { direction: 'left', message: this.state.newMessage }
+    this.ws.send(JSON.stringify(message))
+    this.addMessage(message)
+    
+    this.setState({
+      newMessage: ''
+    });
+  };
+
   render() {
     return (
       <div className="card page" style={{ backgroundImage: `url(${Background})`}}>
-        
-        <AppBar position="static"style={{ background: '#b39ddb',  position: 'absolute', left: '0%',minHeight: 80, }} subtitle={this.renderIcon()}>
+      
+        <AppBar position="static"style={{ background: '#b39ddb',  position: 'absolute', left: '0%',minHeight: 80, marginTop : '-32px' }} subtitle={this.renderIcon()}>
           <Toolbar>
           <IconButton variant="outlined" edge="start" color="action" onClick={() => { 
               localStorage.removeItem('currentContact')
@@ -73,6 +135,44 @@ class Chat extends Component {
             {this.renderIcon()}
           </div>
         </AppBar>
+        {/*
+        <div>
+        <div style={{width: "100%", height: "100%", border:"2px solid black",borderRadius:"20px"}}>
+        {this.state.messages.reverse().map((message, index) =>
+        
+          <ChatMessage
+            key={index}
+            message={message.message}
+            owner={message.owner}
+          />,
+        )}
+        </div>
+        </div>*/}
+        <div style={{width:'100%', marginTop:"80px"}}>
+        <ChatLayout messages={this.state.messages}/>
+        </div>
+        <FormControl inline variant="outlined" style={{ flex: 1, justifyContent: 'flex-end', height: '100%',width : '100%', outline: 'none', }}>
+         
+          <OutlinedInput id="component-outlined" 
+                         placeholder="Type a message" 
+                         value={this.state.newMessage} 
+                         onChange={this.handleChange} 
+                         endAdornment={
+                          <InputAdornment position="end">
+                            <IconButton
+                              style={{outline : 'none'}}
+                              onClick={this.handleClickSend}
+                              edge="end"
+                            >
+                             <TelegramIcon style={{color : 'white' }} />
+                             </IconButton>
+                          </InputAdornment>
+                        }
+                         style={{backgroundColor:'rgba(0,0,0,0.5)', color : 'rgba(255,255,255)', outline: 'none', borderRadius:'20px'}}
+          />
+       
+        </FormControl>
+        
         </div >
     );
   }
