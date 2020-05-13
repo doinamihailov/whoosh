@@ -52,7 +52,7 @@ class Chat extends Component {
     this.ws.onmessage = evt => {
       // on receiving a message, add it to the list of messages
       let message = JSON.parse(evt.data)
-      message.direction = 'right';
+      message.direction = 'left';
       console.log(message)
       this.addMessage(message)
     }
@@ -106,7 +106,7 @@ class Chat extends Component {
   handleClickSend = (e) => {
     e.preventDefault();
 
-    const message = { direction: 'left', message: this.state.newMessage }
+    const message = { direction: 'right', message: this.state.newMessage }
     this.ws.send(JSON.stringify(message))
     this.addMessage(message)
     
