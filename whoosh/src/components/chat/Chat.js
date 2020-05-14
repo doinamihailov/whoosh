@@ -17,6 +17,7 @@ import ChatLayout from "../chatLayout/ChatLayout";
 import { MDBContainer, MDBScrollbar } from "mdbreact";
 
 const URL = 'ws://localhost:3030'
+//const URL = process.env.REACT_APP_WS;
 
 
 class Chat extends Component {
