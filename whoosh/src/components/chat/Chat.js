@@ -60,7 +60,19 @@ class Chat extends Component {
         ws: new WebSocket(URL),
       })
     }
+    this.setupBeforeUnloadListener();
   }
+
+  doSomethingBeforeUnload = () => {
+    this.ws.send(JSON.stringify({'disconnect': true, 'sender': this.state.me, 'receiver': this.state.contact.email}));
+  }   
+
+  setupBeforeUnloadListener = () => {
+    window.addEventListener("beforeunload", (ev) => {
+        ev.preventDefault();
+        return this.doSomethingBeforeUnload();
+    });
+  };
 
   addMessage = message =>
     this.setState(state => ({ messages: [...state.messages, message] }))
@@ -118,6 +130,7 @@ class Chat extends Component {
         <AppBar position="static"style={{ background: '#b39ddb',  position: 'absolute', left: '0%',minHeight: 80, marginTop : '-30px'}} subtitle={this.renderIcon()}>
           <Toolbar>
           <IconButton variant="outlined" edge="start" color="action" onClick={() => { 
+              this.doSomethingBeforeUnload();
               localStorage.removeItem('currentContact')
               this.props.history.push('/welcome'); 
               }}>

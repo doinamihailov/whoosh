@@ -9,6 +9,11 @@ wss.on('connection', function connection(ws) {
     //console.log("Data : "+ JSON.stringify(ws))
   ws.on('message', function incoming(data) {
       const info = JSON.parse(data);
+    if (info.hasOwnProperty('disconnect')){
+        console.log("User " + info.sender + ' has disconnected from ' + info.receiver);
+        connections = connections.filter(x => x.email !== info.sender && x.sendto !== info.receiver);
+    }
+        else
     if (info.hasOwnProperty('id')) {
         console.log('User ' + info.id + ' connected  to send messages to ' + info.receiver);
         connections = connections.filter(x => x.email !== info.id && x.sendto !== info.receiver);
@@ -33,12 +38,6 @@ wss.on('connection', function connection(ws) {
     }
     else {
         console.log('Received: ' + info.message + ' from ' + info.sender + ' to ' + info.receiver);
-       /* wss.clients.forEach(function each(client) {
-        if (client !== ws && client.readyState === WebSocket.OPEN) {
-            client.send(data);
-            //console.log(client);
-        }
-        });*/
         const receiver = connections.filter(x => x.email === info.receiver && x.sendto === info.sender);
         if (receiver && receiver.length !== 0)
             receiver[0].sock.send(data);
