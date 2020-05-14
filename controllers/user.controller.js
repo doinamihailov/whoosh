@@ -51,7 +51,7 @@ exports.login = (req, res) => {
 
     try {
       const results = dbase.collection('users').find().toArray(function(err, result) {
-        if (result.length > 0) {
+        if (result.filter(x => x.email === req.body.email).length > 0) {
           var oldUser =  result.filter(x => x.email === req.body.email);
           const pass = oldUser[0].password;
           bcrypt
@@ -75,11 +75,16 @@ exports.login = (req, res) => {
             }
             else {
               res.status(403).send({
-                message: 'Incorrect username or password'
+                message: 'Incorrect password'
               });
             }
           })
           .catch(err => console.error(err.message));
+        }
+        else {
+          res.status(404).send({
+            message: 'Incorrect username'
+          });
         }
    });
 

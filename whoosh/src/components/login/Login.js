@@ -48,6 +48,7 @@ export default class Login extends Component {
       })
       .catch(error => {
         console.log(error);
+        if(error.response){
         if (error.response.status === 403)
           this.setState({
             message: "Incorrect password!"
@@ -56,6 +57,12 @@ export default class Login extends Component {
           this.setState({
             message: "Incorrect email address!"
           });
+        }
+        else {
+          this.setState({
+            message: "Server error. Try again later"
+          });
+        }
       });
 
   }
