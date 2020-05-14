@@ -13,10 +13,12 @@ const useStyles = makeStyles(theme => ({
   },
   bubble: {
     border: "0.5px solid black",
-    borderRadius: "10px",
+    borderRadius: "20px",
     margin: "5px",
     padding: "10px",
-    display: "inline-block"
+    display: "inline-block",
+    backgroundColor:'rgba(0,0,0,0.5)', 
+    color : 'rgba(255,255,255)',
   }
 }));
 

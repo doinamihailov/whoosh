@@ -1,7 +1,6 @@
 import React, { Component } from "react";
-import Button from '@material-ui/core/Button';
 import "./Chat.css";
-import Title from '../title/Title';
+
 import IconButton from "@material-ui/core/IconButton";
 import ArrowBackTwoToneIcon from '@material-ui/icons/ArrowBackTwoTone';
 import InputAdornment from "@material-ui/core/InputAdornment";
@@ -9,22 +8,13 @@ import TollSharpIcon from '@material-ui/icons/TollSharp';
 import Typography from '@material-ui/core/Typography';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
-import Card from '@material-ui/core/Card';
-import CardHeader from '@material-ui/core/CardHeader';
-import CardMedia from '@material-ui/core/CardMedia';
-import CardContent from '@material-ui/core/CardContent';
-import CardActions from '@material-ui/core/CardActions';
 import Background from '../../images/vama.jpeg';
-import FilledInput from '@material-ui/core/FilledInput';
 import FormControl from '@material-ui/core/FormControl';
-import FormHelperText from '@material-ui/core/FormHelperText';
-import Input from '@material-ui/core/Input';
-import InputLabel from '@material-ui/core/InputLabel';
 import OutlinedInput from '@material-ui/core/OutlinedInput';
-import TextField from '@material-ui/core/TextField';
 import TelegramIcon from '@material-ui/icons/Telegram';
-import ChatMessage from '../chatMessage/ChatMessage'
 import ChatLayout from "../chatLayout/ChatLayout";
+
+import { MDBContainer, MDBScrollbar } from "mdbreact";
 
 const URL = 'ws://localhost:3030'
 
@@ -34,6 +24,7 @@ class Chat extends Component {
   constructor(props) {
     super(props);
     this.state = {
+        me: '',
         contact: '',
         newMessage: '',
         socket : '',
@@ -47,6 +38,11 @@ class Chat extends Component {
     this.ws.onopen = () => {
       // on connecting, do nothing but log it to the console
       console.log('connected')
+      const email = localStorage.getItem("currentEmail");
+      this.setState ({
+        me : email
+      });
+      this.ws.send(JSON.stringify({'id':email, 'receiver': this.state.contact.email}))
     }
 
     this.ws.onmessage = evt => {
@@ -106,7 +102,7 @@ class Chat extends Component {
   handleClickSend = (e) => {
     e.preventDefault();
 
-    const message = { direction: 'right', message: this.state.newMessage }
+    const message = { direction: 'right', message: this.state.newMessage, receiver: this.state.contact.email, sender: this.state.me }
     this.ws.send(JSON.stringify(message))
     this.addMessage(message)
     
@@ -117,9 +113,9 @@ class Chat extends Component {
 
   render() {
     return (
-      <div className="card page" style={{ backgroundImage: `url(${Background})`}}>
+      <div className="card page" style={{ backgroundImage: `url(${Background})`, top:0, position:'fixed', height:'100%',  marginTop : '60px' }}>
       
-        <AppBar position="static"style={{ background: '#b39ddb',  position: 'absolute', left: '0%',minHeight: 80, marginTop : '-32px' }} subtitle={this.renderIcon()}>
+        <AppBar position="static"style={{ background: '#b39ddb',  position: 'absolute', left: '0%',minHeight: 80, marginTop : '-30px'}} subtitle={this.renderIcon()}>
           <Toolbar>
           <IconButton variant="outlined" edge="start" color="action" onClick={() => { 
               localStorage.removeItem('currentContact')
@@ -135,23 +131,12 @@ class Chat extends Component {
             {this.renderIcon()}
           </div>
         </AppBar>
-        {/*
-        <div>
-        <div style={{width: "100%", height: "100%", border:"2px solid black",borderRadius:"20px"}}>
-        {this.state.messages.reverse().map((message, index) =>
-        
-          <ChatMessage
-            key={index}
-            message={message.message}
-            owner={message.owner}
-          />,
-        )}
-        </div>
-        </div>*/}
-        <div style={{width:'100%', marginTop:"80px"}}>
+        <MDBContainer>
+        <div style={{width:'95%', height:'auto',  flex: 1, justifyContent: 'flex-end', position: 'absolute', bottom: 0, marginBottom:"120px", marginLeft: "-20px"}}>
         <ChatLayout messages={this.state.messages}/>
         </div>
-        <FormControl inline variant="outlined" style={{ flex: 1, justifyContent: 'flex-end', height: '100%',width : '100%', outline: 'none', }}>
+        </MDBContainer>
+        <FormControl inline variant="outlined" style={{ flex: 1, justifyContent: 'flex-end', height: '100%',width : '60%', outline: 'none', bottom: 0, position : 'fixed'}}>
          
           <OutlinedInput id="component-outlined" 
                          placeholder="Type a message" 
