@@ -31,6 +31,7 @@ wss.on('connection', function connection(ws) {
                             }
                 ws.send(JSON.stringify(message));
             }
+            oldMessages[index].messages = [];
         }
         else {
             console.log("No new messages");

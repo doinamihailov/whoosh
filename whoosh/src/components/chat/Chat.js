@@ -50,13 +50,16 @@ class Chat extends Component {
       // on receiving a message, add it to the list of messages
       let message = JSON.parse(evt.data)
       message.direction = 'left';
-      console.log(message)
+      let c = this.state.contact;
+      c.online = 'true';
+      this.setState({
+        contact : c
+      })
       this.addMessage(message)
     }
 
     this.ws.onclose = () => {
       console.log('disconnected')
-      // automatically try to reconnect on connection loss
       this.setState({
         ws: new WebSocket(URL),
       })
